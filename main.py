@@ -63,23 +63,23 @@ audio = getI2CAudio()
 def test_play_by_button(a):
 
     quiet_wavs = ["audio/g1a.wav", "audio/g1b.wav", "audio/g1c.wav"]
+    loud_wavs  = ["audio/g2a.wav", "audio/g2b.wav", "audio/g2c.wav"]
 
     switch = digitalio.DigitalInOut(board.D5)
     switch.direction = digitalio.Direction.INPUT
     switch.pull = digitalio.Pull.UP
 
     i_quiet = 0
-
+    i_loud  = 0
     while True:
         if switch.value: # not pressed
             print("NOT pressed")
             play_with_mixer(a, quiet_wavs[i_quiet])
-            i_quiet = (i_quiet+1) % 3
+            i_quiet = (i_quiet+1) % len(quiet_wavs)
         else:
             print("pressed")
-            play_with_mixer(a, "audio/g2a.wav")
-            play_with_mixer(a, "audio/g2a.wav")
-        time.sleep(0.5)
+            play_with_mixer(a, loud_wavs[i_loud])
+            i_loud = (i_loud+1) % len(loud_wavs)
 
 test_play_by_button(audio)
 
