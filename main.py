@@ -1,4 +1,7 @@
-# fc 1
+# faker-counter: a geiger counter simulator.
+# Plays WAV files, loud or soft according to the state of a pushbutton.
+# robcranfill@gmail.com
+
 
 # std python libs
 import array
@@ -18,23 +21,18 @@ import digitalio
 import supervisor
 supervisor.runtime.autoreload = False  # CirPy 8 and above
 
-# defines, so to speak
-
-I2S_BIT_CLOCK  = board.D9
-I2S_WORD_CLOCK = board.D10
-I2S_DATA       = board.D11
-
 
 # Return an audio object for the I2S interface
 def get_I2C_audio():
-    return audiobusio.I2SOut(bit_clock=I2S_BIT_CLOCK, word_select=I2S_WORD_CLOCK, data=I2S_DATA)
+    return audiobusio.I2SOut(bit_clock=board.D9, word_select=board.D10, data=board.D11)
 
-def create_mixer():
+def create_mixer(audio_):
     mixer = audiomixer.Mixer(voice_count=1, channel_count=1,
                              sample_rate=44100, bits_per_sample=16, samples_signed=True)
-    audio.play(mixer)
+    audio_.play(mixer)
     return mixer
 
+# start the wav file playing, and wait for it to finish
 def play_loaded_wav(mixer_, wav_):
     mixer_.voice[0].play(wav_, loop=False)
     while mixer_.voice[0].playing:
@@ -52,6 +50,10 @@ def load_wavs(filenames):
     return result
 
 
+# Our main loop.
+# Iterates over the wav files, "low" or "high" according to the button state.
+# TODO: play a random wav, rather than the next one?
+#
 def play_wavs(mixer_, lo_wavs_, hi_wavs_):
 
     switch = digitalio.DigitalInOut(board.D5)
@@ -61,7 +63,7 @@ def play_wavs(mixer_, lo_wavs_, hi_wavs_):
     i_lo = 0
     i_hi  = 0
     while True:
-        if switch.value: # not pressed
+        if switch.value: # not pressed - "low" activity
             play_loaded_wav(mixer_, lo_wavs_[i_lo])
             i_lo = (i_lo+1) % len(lo_wavs_)
         else:
@@ -73,7 +75,7 @@ def play_wavs(mixer_, lo_wavs_, hi_wavs_):
 audio = get_I2C_audio()
 
 # new approach
-mixer = create_mixer()
+mixer = create_mixer(audio)
 
 lo_wavs = load_wavs(["audio/g1a.wav", "audio/g1b.wav", "audio/g1c.wav"])
 hi_wavs = load_wavs(["audio/g2a.wav", "audio/g2b.wav", "audio/g2c.wav"])
