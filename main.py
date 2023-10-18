@@ -14,20 +14,33 @@ import audiomixer
 import audiopwmio
 import digitalio
 
+# TODO: don't open the WAV file every time - preload them all!
+
 
 import supervisor
 supervisor.runtime.autoreload = False  # CirPy 8 and above
 
+# defines, so to speak
 
-# works for one file!
+I2S_BIT_CLOCK  = board.D9
+I2S_WORD_CLOCK = board.D10
+I2S_DATA       = board.D11
+
+
+
+# Play a WAV file. Must match the indicated sample rate or it will barf.
 def play_with_mixer(audio, filename):
+
+    # print(f"Playing {filename}...")
 
     mixer = audiomixer.Mixer(voice_count=1, channel_count=1,
                             sample_rate=44100, bits_per_sample=16, samples_signed=True)
     audio.play(mixer)
-
-    # print(f"Playing {filename}...")
-    wav = audiocore.WaveFile(open(filename, "rb"))
+    try:
+        wav = audiocore.WaveFile(open(filename, "rb"))
+    except:
+        print(f"Can't find file {filename}?")
+        return
     mixer.voice[0].play(wav, loop=False)
     s = 0
     while mixer.voice[0].playing:
@@ -37,12 +50,10 @@ def play_with_mixer(audio, filename):
     # print(" Done playing!")
 
 
-def getPWMAudio():
-    # must be a PWM-capable pin - not all are
-    return audiopwmio.PWMAudioOut(board.TX)
-
+# Return an audio object for the I2S interface
 def getI2CAudio():
-    return audiobusio.I2SOut(board.D9, board.D10, board.D11)
+    return audiobusio.I2SOut(I2S_BIT_CLOCK, I2S_WORD_CLOCK, I2S_DATA)
+
 
 # this works ok as a test
 def test_cycle_samples(a):
@@ -85,9 +96,9 @@ def test_play_by_button(a):
             i_hi = (i_hi+1) % len(hi_wavs)
 
 
-# Pick an audio interface
-# audio = getPWMAudio()
+# Hook up to the audio interface
 audio = getI2CAudio()
+
 
 # works!
 # test_cycle_samples(audio)
