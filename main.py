@@ -14,8 +14,6 @@ import audiomixer
 import audiopwmio
 import digitalio
 
-# TODO: don't open the WAV file every time - preload them all!
-
 
 import supervisor
 supervisor.runtime.autoreload = False  # CirPy 8 and above
@@ -27,59 +25,34 @@ I2S_WORD_CLOCK = board.D10
 I2S_DATA       = board.D11
 
 
-
-# Play a WAV file. Must match the indicated sample rate or it will barf.
-def play_with_mixer(audio, filename):
-
-    # print(f"Playing {filename}...")
-
-    mixer = audiomixer.Mixer(voice_count=1, channel_count=1,
-                            sample_rate=44100, bits_per_sample=16, samples_signed=True)
-    audio.play(mixer)
-    try:
-        wav = audiocore.WaveFile(open(filename, "rb"))
-    except:
-        print(f"Can't find file {filename}?")
-        return
-    mixer.voice[0].play(wav, loop=False)
-    s = 0
-    while mixer.voice[0].playing:
-        # print(f"  waiting #{s}...")
-        time.sleep(.1)
-        s += 1
-    # print(" Done playing!")
-
-
 # Return an audio object for the I2S interface
-def getI2CAudio():
-    return audiobusio.I2SOut(I2S_BIT_CLOCK, I2S_WORD_CLOCK, I2S_DATA)
+def get_I2C_audio():
+    return audiobusio.I2SOut(bit_clock=I2S_BIT_CLOCK, word_select=I2S_WORD_CLOCK, data=I2S_DATA)
+
+def create_mixer():
+    mixer = audiomixer.Mixer(voice_count=1, channel_count=1,
+                             sample_rate=44100, bits_per_sample=16, samples_signed=True)
+    audio.play(mixer)
+    return mixer
+
+def play_loaded_wav(mixer_, wav_):
+    mixer_.voice[0].play(wav_, loop=False)
+    while mixer_.voice[0].playing:
+        time.sleep(.1)
+
+def load_wavs(filenames):
+    result = []
+    for f in filenames:
+        try:
+            wav = audiocore.WaveFile(open(f, "rb"))
+            result.append(wav)
+        except Exception as e:
+            print(f"Can't find file {f}?")
+            raise(e)
+    return result
 
 
-# this works ok as a test
-def test_cycle_samples(a):
-    while True:
-        print("Low....")
-        play_with_mixer(a, "audio/g1a.wav")
-        play_with_mixer(a, "audio/g1b.wav")
-        play_with_mixer(a, "audio/g1c.wav")
-        print("High....")
-        play_with_mixer(a, "audio/g2a.wav")
-        play_with_mixer(a, "audio/g2a.wav")
-
-
-# can't go fast enough to sound good
-def test_buncha_clicks(a):
-    while True:
-        play_with_mixer(a, "audio/1click.wav")
-        r = random.randrange(0, 100) / 1000
-        # print(r)
-        time.sleep(r)
-
-
-def test_play_by_button(a):
-
-    lo_wavs = ["audio/g1a.wav", "audio/g1b.wav", "audio/g1c.wav"]
-    hi_wavs = ["audio/g2a.wav", "audio/g2b.wav", "audio/g2c.wav"]
+def play_wavs(mixer_, lo_wavs_, hi_wavs_):
 
     switch = digitalio.DigitalInOut(board.D5)
     switch.direction = digitalio.Direction.INPUT
@@ -89,33 +62,21 @@ def test_play_by_button(a):
     i_hi  = 0
     while True:
         if switch.value: # not pressed
-            play_with_mixer(a, lo_wavs[i_lo])
-            i_lo = (i_lo+1) % len(lo_wavs)
+            play_loaded_wav(mixer_, lo_wavs_[i_lo])
+            i_lo = (i_lo+1) % len(lo_wavs_)
         else:
-            play_with_mixer(a, hi_wavs[i_hi])
-            i_hi = (i_hi+1) % len(hi_wavs)
+            play_loaded_wav(mixer_, hi_wavs_[i_hi])
+            i_hi = (i_hi+1) % len(hi_wavs_)
 
 
 # Hook up to the audio interface
-audio = getI2CAudio()
+audio = get_I2C_audio()
 
+# new approach
+mixer = create_mixer()
 
-# works!
-# test_cycle_samples(audio)
+lo_wavs = load_wavs(["audio/g1a.wav", "audio/g1b.wav", "audio/g1c.wav"])
+hi_wavs = load_wavs(["audio/g2a.wav", "audio/g2b.wav", "audio/g2c.wav"])
 
-# test_buncha_clicks(audio)
-
-# pretty much it!
-test_play_by_button(audio)
-
-
-# this is 10 seconds long - too long unless I can interrupt it
-# play_with_mixer(audio, "audio/geiger1b.wav")
-
-# these are all too short
-# play_with_mixer(audio, "audio/geiger2b.wav")
-# play_with_mixer(audio, "audio/geiger3b.wav")
-# play_with_mixer(audio, "audio/geiger4b.wav")
-# play_with_mixer(audio, "audio/geiger5b.wav")
-# play_with_mixer(audio, "audio/geiger6b.wav")
+play_wavs(mixer, lo_wavs, hi_wavs)
 
