@@ -2,7 +2,6 @@
 # Plays WAV files, loud or soft according to the state of a pushbutton.
 # robcranfill@gmail.com
 
-
 # std python libs
 import array
 import board
@@ -14,7 +13,6 @@ import time
 import audiobusio
 import audiocore
 import audiomixer
-import audiopwmio
 import digitalio
 
 
@@ -32,12 +30,7 @@ def create_mixer(audio_):
     audio_.play(mixer)
     return mixer
 
-# start the wav file playing, and wait for it to finish
-def play_loaded_wav(mixer_, wav_):
-    mixer_.voice[0].play(wav_, loop=False)
-    while mixer_.voice[0].playing:
-        time.sleep(.1)
-
+# load all the indicated wav files and return an array with the data
 def load_wavs(filenames):
     result = []
     for f in filenames:
@@ -45,13 +38,20 @@ def load_wavs(filenames):
             wav = audiocore.WaveFile(open(f, "rb"))
             result.append(wav)
         except Exception as e:
-            print(f"Can't find file {f}?")
+            print(f"Can't load file {f}")
             raise(e)
     return result
 
+# start the wav file playing, and wait for it to finish
+def play_loaded_wav(mixer_, wav_):
+    mixer_.voice[0].play(wav_, loop=False)
+    while mixer_.voice[0].playing:
+        time.sleep(.1)
+
 
 # Our main loop.
-# Iterates over the wav files, "low" or "high" according to the button state.
+# Iterates over the wav files, 
+# playing a "low" or "high" activity one according to the button state.
 # TODO: play a random wav, rather than the next one?
 #
 def play_wavs(mixer_, lo_wavs_, hi_wavs_):
@@ -61,7 +61,7 @@ def play_wavs(mixer_, lo_wavs_, hi_wavs_):
     switch.pull = digitalio.Pull.UP
 
     i_lo = 0
-    i_hi  = 0
+    i_hi = 0
     while True:
         if switch.value: # not pressed - "low" activity
             play_loaded_wav(mixer_, lo_wavs_[i_lo])
@@ -81,4 +81,3 @@ lo_wavs = load_wavs(["audio/g1a.wav", "audio/g1b.wav", "audio/g1c.wav"])
 hi_wavs = load_wavs(["audio/g2a.wav", "audio/g2b.wav", "audio/g2c.wav"])
 
 play_wavs(mixer, lo_wavs, hi_wavs)
-
