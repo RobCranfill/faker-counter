@@ -7,7 +7,7 @@ Can I get this done by Halloweeen?
 
 ### Functional Hardware
 * CircuitPython microcontroller (needs to support I2S - 3 GPIO pins)
-  * was <strike>Feather RP2040 (so I can use a LiPo battery)</strike>
+  * *was:* <strike>Feather RP2040 (so I can use a LiPo battery)</strike>
 * USB battery pack
 * Actuator to increase click rate
   * Button? Easiest. Ramp up/down?
