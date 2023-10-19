@@ -3,9 +3,7 @@
 # robcranfill@gmail.com
 
 # std python libs
-import array
 import board
-import math
 import random
 import time
 
@@ -52,7 +50,6 @@ def play_loaded_wav(mixer_, wav_):
 # Our main loop.
 # Iterates over the wav files, 
 # playing a "low" or "high" activity one according to the button state.
-# TODO: play a random wav, rather than the next one?
 #
 def play_wavs(mixer_, lo_wavs_, hi_wavs_):
 
@@ -60,15 +57,24 @@ def play_wavs(mixer_, lo_wavs_, hi_wavs_):
     switch.direction = digitalio.Direction.INPUT
     switch.pull = digitalio.Pull.UP
 
+    # it's actually kinda better to play them in sequence, so you never get a repeat :-/
+    do_random = False
+
     i_lo = 0
     i_hi = 0
     while True:
         if switch.value: # not pressed - "low" activity
-            play_loaded_wav(mixer_, lo_wavs_[i_lo])
-            i_lo = (i_lo+1) % len(lo_wavs_)
+            if do_random:
+                play_loaded_wav(mixer_, random.choice(lo_wavs_))
+            else:
+                play_loaded_wav(mixer_, lo_wavs_[i_lo])
+                i_lo = (i_lo+1) % len(lo_wavs_)
         else:
-            play_loaded_wav(mixer_, hi_wavs_[i_hi])
-            i_hi = (i_hi+1) % len(hi_wavs_)
+            if do_random:
+                play_loaded_wav(mixer_, random.choice(hi_wavs_))
+            else:
+                play_loaded_wav(mixer_, hi_wavs_[i_hi])
+                i_hi = (i_hi+1) % len(hi_wavs_)
 
 
 # Hook up to the audio interface
