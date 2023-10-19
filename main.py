@@ -47,6 +47,7 @@ def play_loaded_wav(mixer_, wav_):
         time.sleep(.1)
 
 
+
 # Our main loop.
 # Iterates over the wav files, 
 # playing a "low" or "high" activity one according to the button state.
@@ -77,13 +78,62 @@ def play_wavs(mixer_, lo_wavs_, hi_wavs_):
                 i_hi = (i_hi+1) % len(hi_wavs_)
 
 
-# Hook up to the audio interface
-audio = get_I2C_audio()
+# play one sound continuously until we need to switch!
+def play_take_two(mixer_, lo_wav, hi_wav):
 
-# new approach
-mixer = create_mixer(audio)
+    switch = digitalio.DigitalInOut(board.D5)
+    switch.direction = digitalio.Direction.INPUT
+    switch.pull = digitalio.Pull.UP
 
-lo_wavs = load_wavs(["audio/g1a.wav", "audio/g1b.wav", "audio/g1c.wav"])
-hi_wavs = load_wavs(["audio/g2a.wav", "audio/g2b.wav", "audio/g2c.wav"])
+    wav = lo_wav
+    button_was_pressed = False
 
-play_wavs(mixer, lo_wavs, hi_wavs)
+    while True:
+
+        print(f"Playing {wav}...")
+        mixer_.voice[0].play(wav, loop=True)
+
+        while mixer_.voice[0].playing:
+            if not button_was_pressed and not switch.value: # button pressed
+                wav = hi_wav
+                # do we need to re-trigger someting?
+                print("  hi")
+                button_was_pressed = True
+                break
+            elif button_was_pressed and switch.value: # button not pressed
+                wav = lo_wav
+                # do we need to re-trigger someting?
+                print("  lo")
+                button_was_pressed = False
+                break
+            time.sleep(.1)
+
+
+
+def method_1():
+
+    # Hook up to the audio interface
+    audio = get_I2C_audio()
+
+    mixer = create_mixer(audio)
+
+    lo_wavs = load_wavs(["audio/g1a.wav", "audio/g1b.wav", "audio/g1c.wav"])
+    hi_wavs = load_wavs(["audio/g2a.wav", "audio/g2b.wav", "audio/g2c.wav"])
+
+    play_wavs(mixer, lo_wavs, hi_wavs)
+
+
+def method_2():
+    audio = get_I2C_audio()
+    mixer = create_mixer(audio)
+
+    lo_wav = load_wavs(["audio/long_lo.wav"])[0]
+    hi_wav = load_wavs(["audio/long_hi.wav"])[0]
+    # lo_wav = load_wavs(["audio/g1a.wav"])[0]
+    # hi_wav = load_wavs(["audio/g2a.wav"])[0]
+
+    play_take_two(mixer, lo_wav, hi_wav)
+
+
+# method_1()
+method_2()
