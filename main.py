@@ -18,7 +18,7 @@ import supervisor
 supervisor.runtime.autoreload = False  # CirPy 8 and above
 
 # defines, so to speak
-PIN_PUSHBUTTON = board. D6 # was D5, but I moved it farther from I2S line
+PIN_PUSHBUTTON = board. D5 # was D6, but I moved it farther from I2S line
 PIN_I2S_BCLK   = board. D9
 PIN_I2S_LRC    = board.D10
 PIN_I2S_DATA   = board.D11
