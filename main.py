@@ -17,9 +17,15 @@ import digitalio
 import supervisor
 supervisor.runtime.autoreload = False  # CirPy 8 and above
 
+# defines, so to speak
+PIN_PUSHBUTTON = board. D6 # was D5, but I moved it farther from I2S line
+PIN_I2S_BCLK   = board. D9
+PIN_I2S_LRC    = board.D10
+PIN_I2S_DATA   = board.D11
+
 
 def create_mixer():
-    audio = audiobusio.I2SOut(bit_clock=board.D9, word_select=board.D10, data=board.D11)
+    audio = audiobusio.I2SOut(bit_clock=PIN_I2S_BCLK, word_select=PIN_I2S_LRC, data=PIN_I2S_DATA)
     mixer = audiomixer.Mixer(voice_count=1, channel_count=1,
                              sample_rate=44100, bits_per_sample=16, samples_signed=True)
     audio.play(mixer)
@@ -48,11 +54,7 @@ def play_loaded_wav(mixer_, wav_):
 # Iterates over the wav files, 
 # playing a "low" or "high" activity one according to the button state.
 #
-def play_in_sequence(mixer_, lo_wavs_, hi_wavs_):
-
-    switch = digitalio.DigitalInOut(board.D5)
-    switch.direction = digitalio.Direction.INPUT
-    switch.pull = digitalio.Pull.UP
+def play_in_sequence(switch_, mixer_, lo_wavs_, hi_wavs_):
 
     # it's actually kinda better to play them in sequence, so you never get a repeat :-/
     do_random = False
@@ -60,7 +62,7 @@ def play_in_sequence(mixer_, lo_wavs_, hi_wavs_):
     i_lo = 0
     i_hi = 0
     while True:
-        if switch.value: # not pressed - "low" activity
+        if switch_.value: # not pressed - "low" activity
             if do_random:
                 play_loaded_wav(mixer_, random.choice(lo_wavs_))
             else:
@@ -75,11 +77,7 @@ def play_in_sequence(mixer_, lo_wavs_, hi_wavs_):
 
 
 # play one sound continuously until we need to switch!
-def play_continuosly(mixer_, lo_wav, hi_wav):
-
-    switch = digitalio.DigitalInOut(board.D5)
-    switch.direction = digitalio.Direction.INPUT
-    switch.pull = digitalio.Pull.UP
+def play_continuosly(switch_, mixer_, lo_wav, hi_wav):
 
     wav = lo_wav
     button_was_pressed = False
@@ -89,11 +87,11 @@ def play_continuosly(mixer_, lo_wav, hi_wav):
         mixer_.voice[0].play(wav, loop=True)
 
         while mixer_.voice[0].playing:
-            if not button_was_pressed and not switch.value: # button pressed
+            if not button_was_pressed and not switch_.value: # button pressed
                 wav = hi_wav
                 button_was_pressed = True
                 break
-            elif button_was_pressed and switch.value: # button not pressed
+            elif button_was_pressed and switch_.value: # button not pressed
                 wav = lo_wav
                 button_was_pressed = False
                 break
@@ -101,26 +99,31 @@ def play_continuosly(mixer_, lo_wav, hi_wav):
 
 
 # Play the files one after the other, switching as needed
-def method_1():
+def method_1(switch_):
 
     mixer = create_mixer()
 
     lo_wavs = load_wavs(["audio/g1a.wav", "audio/g1b.wav", "audio/g1c.wav"])
     hi_wavs = load_wavs(["audio/g2a.wav", "audio/g2b.wav", "audio/g2c.wav"])
 
-    play_in_sequence(mixer, lo_wavs, hi_wavs)
+    play_in_sequence(switch_, mixer, lo_wavs, hi_wavs)
 
 
 # play the low or high file continuously until we need to switch
-def method_2():
+def method_2(switch_):
 
     mixer = create_mixer()
 
     lo_wav = load_wavs(["audio/long_lo.wav"])[0]
     hi_wav = load_wavs(["audio/long_hi.wav"])[0]
 
-    play_continuosly(mixer, lo_wav, hi_wav)
+    play_continuosly(switch_, mixer, lo_wav, hi_wav)
 
 
-# method_1()
-method_2()
+# the pushbutton
+switch = digitalio.DigitalInOut(PIN_PUSHBUTTON)
+switch.direction = digitalio.Direction.INPUT
+switch.pull = digitalio.Pull.UP
+
+# method_1(switch)
+method_2(switch)
