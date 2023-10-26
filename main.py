@@ -12,6 +12,8 @@ import audiobusio
 import audiocore
 import audiomixer
 import digitalio
+import neopixel
+
 
 # turn off auto-reload - that messes with the audio
 import supervisor
@@ -77,10 +79,11 @@ def play_in_sequence(switch_, mixer_, lo_wavs_, hi_wavs_):
 
 
 # play one sound continuously until we need to switch!
-def play_continuosly(switch_, mixer_, lo_wav, hi_wav):
+def play_continuosly(switch_, neopixel_, mixer_, lo_wav, hi_wav):
 
     wav = lo_wav
     button_was_pressed = False
+    led_on = False
 
     while True:
 
@@ -95,6 +98,14 @@ def play_continuosly(switch_, mixer_, lo_wav, hi_wav):
                 wav = lo_wav
                 button_was_pressed = False
                 break
+
+            led_on = not led_on
+            if led_on:
+                # red if button_was_pressed, green otherwise
+                neopixel_.fill((255 if button_was_pressed else 0, 0 if button_was_pressed else 255, 0))
+            else:
+                neopixel_.fill((0, 0, 0))
+
             time.sleep(.1)
 
 
@@ -110,14 +121,14 @@ def method_1(switch_):
 
 
 # play the low or high file continuously until we need to switch
-def method_2(switch_):
+def method_2(switch_, neopixel_):
 
     mixer = create_mixer()
 
     lo_wav = load_wavs(["audio/long_lo.wav"])[0]
     hi_wav = load_wavs(["audio/long_hi.wav"])[0]
 
-    play_continuosly(switch_, mixer, lo_wav, hi_wav)
+    play_continuosly(switch_, neopixel_, mixer, lo_wav, hi_wav)
 
 
 # the pushbutton
@@ -125,5 +136,11 @@ switch = digitalio.DigitalInOut(PIN_PUSHBUTTON)
 switch.direction = digitalio.Direction.INPUT
 switch.pull = digitalio.Pull.UP
 
+# the LED, for kix
+pixel = neopixel.NeoPixel(board.NEOPIXEL, 1)
+pixel.brightness = 0.3
+
+
+
 # method_1(switch)
-method_2(switch)
+method_2(switch, pixel)
