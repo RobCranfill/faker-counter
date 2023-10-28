@@ -52,34 +52,9 @@ def play_loaded_wav(mixer_, wav_):
         time.sleep(.1)
 
 
-# Our main loop.
-# Iterates over the wav files, 
-# playing a "low" or "high" activity one according to the button state.
-#
-def play_in_sequence(switch_, mixer_, lo_wavs_, hi_wavs_):
 
-    # it's actually kinda better to play them in sequence, so you never get a repeat :-/
-    do_random = False
-
-    i_lo = 0
-    i_hi = 0
-    while True:
-        if switch_.value: # not pressed - "low" activity
-            if do_random:
-                play_loaded_wav(mixer_, random.choice(lo_wavs_))
-            else:
-                play_loaded_wav(mixer_, lo_wavs_[i_lo])
-                i_lo = (i_lo+1) % len(lo_wavs_)
-        else:
-            if do_random:
-                play_loaded_wav(mixer_, random.choice(hi_wavs_))
-            else:
-                play_loaded_wav(mixer_, hi_wavs_[i_hi])
-                i_hi = (i_hi+1) % len(hi_wavs_)
-
-
-# play one sound continuously until we need to switch!
-def play_continuosly(switch_, neopixel_, mixer_, lo_wav, hi_wav):
+# play one sound continuously until we need to switch.
+def play_continuosly(switch_, neopixel_, red_, green_, mixer_, lo_wav, hi_wav):
 
     wav = lo_wav
     button_was_pressed = False
@@ -101,34 +76,17 @@ def play_continuosly(switch_, neopixel_, mixer_, lo_wav, hi_wav):
 
             led_on = not led_on
             if led_on:
-                # red if button_was_pressed, green otherwise
-                neopixel_.fill((255 if button_was_pressed else 0, 0 if button_was_pressed else 255, 0))
+                if button_was_pressed:
+                    red_.value = True
+                else:
+                    green_.value = True
             else:
-                neopixel_.fill((0, 0, 0))
+                red_.value = False
+                green_.value = False
 
             time.sleep(.1)
 
 
-# Play the files one after the other, switching as needed
-def method_1(switch_):
-
-    mixer = create_mixer()
-
-    lo_wavs = load_wavs(["audio/g1a.wav", "audio/g1b.wav", "audio/g1c.wav"])
-    hi_wavs = load_wavs(["audio/g2a.wav", "audio/g2b.wav", "audio/g2c.wav"])
-
-    play_in_sequence(switch_, mixer, lo_wavs, hi_wavs)
-
-
-# play the low or high file continuously until we need to switch
-def method_2(switch_, neopixel_):
-
-    mixer = create_mixer()
-
-    lo_wav = load_wavs(["audio/long_lo.wav"])[0]
-    hi_wav = load_wavs(["audio/long_hi.wav"])[0]
-
-    play_continuosly(switch_, neopixel_, mixer, lo_wav, hi_wav)
 
 
 # the pushbutton
@@ -136,11 +94,29 @@ switch = digitalio.DigitalInOut(PIN_PUSHBUTTON)
 switch.direction = digitalio.Direction.INPUT
 switch.pull = digitalio.Pull.UP
 
-# the LED, for kix
-pixel = neopixel.NeoPixel(board.NEOPIXEL, 1)
-pixel.brightness = 0.3
+# the "internal" LED, for fun
+neopixel = neopixel.NeoPixel(board.NEOPIXEL, 1)
+neopixel.brightness = 0.3
+
+# the new LEDs
+red_led = digitalio.DigitalInOut(board.D4)
+red_led.direction = digitalio.Direction.OUTPUT
+
+green_led = digitalio.DigitalInOut(board.TX)
+green_led.direction = digitalio.Direction.OUTPUT
 
 
+# v = True
+# while True:
+#     red_led.value = v
+#     v = not v
+#     time.sleep(0.1)
 
-# method_1(switch)
-method_2(switch, pixel)
+
+mixer = create_mixer()
+
+lo_wav = load_wavs(["audio/long_lo.wav"])[0]
+hi_wav = load_wavs(["audio/long_hi.wav"])[0]
+
+play_continuosly(switch, neopixel, red_led, green_led, mixer, lo_wav, hi_wav)
+
