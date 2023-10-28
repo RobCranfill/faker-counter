@@ -20,7 +20,10 @@ import supervisor
 supervisor.runtime.autoreload = False  # CirPy 8 and above
 
 # defines, so to speak
-PIN_PUSHBUTTON = board. D5 # was D6, but I moved it farther from I2S line
+GPIO_PIN_PUSHBUTTON = board. D5 # was D6, but I moved it farther from I2S line
+PIN_GPIO_RED_LED = board.TX
+PIN_GPIO_GREEN_LED = board.D4
+
 PIN_I2S_BCLK   = board. D9
 PIN_I2S_LRC    = board.D10
 PIN_I2S_DATA   = board.D11
@@ -59,6 +62,7 @@ def play_continuosly(switch_, neopixel_, red_, green_, mixer_, lo_wav, hi_wav):
     wav = lo_wav
     button_was_pressed = False
     led_on = False
+    green_counter = 0
 
     while True:
 
@@ -79,7 +83,9 @@ def play_continuosly(switch_, neopixel_, red_, green_, mixer_, lo_wav, hi_wav):
                 if button_was_pressed:
                     red_.value = True
                 else:
-                    green_.value = True
+                    green_counter = (green_counter+1) % 4
+                    if green_counter == 0:
+                        green_.value = True
             else:
                 red_.value = False
                 green_.value = False
@@ -90,7 +96,7 @@ def play_continuosly(switch_, neopixel_, red_, green_, mixer_, lo_wav, hi_wav):
 
 
 # the pushbutton
-switch = digitalio.DigitalInOut(PIN_PUSHBUTTON)
+switch = digitalio.DigitalInOut(GPIO_PIN_PUSHBUTTON)
 switch.direction = digitalio.Direction.INPUT
 switch.pull = digitalio.Pull.UP
 
@@ -99,10 +105,10 @@ neopixel = neopixel.NeoPixel(board.NEOPIXEL, 1)
 neopixel.brightness = 0.3
 
 # the new LEDs
-red_led = digitalio.DigitalInOut(board.D4)
+red_led = digitalio.DigitalInOut(PIN_GPIO_RED_LED)
 red_led.direction = digitalio.Direction.OUTPUT
 
-green_led = digitalio.DigitalInOut(board.TX)
+green_led = digitalio.DigitalInOut(PIN_GPIO_GREEN_LED)
 green_led.direction = digitalio.Direction.OUTPUT
 
 
