@@ -27,3 +27,11 @@ Can I get this done by Halloweeen?
 
 ### Software
 CircuitPython, of course!
+
+# Finished Project
+
+![Assembled project](doc_images/fakercounter.jpeg "G")
+![Assembled project](doc_images/board_overall.jpeg "Feather board assembled")
+![Assembled project](doc_images/case_no_board.jpeg "X")
+![Assembled project](doc_images/assembled.jpeg "Assembled")
+![Finished project](doc_images/case_outside.jpeg "The finished project")
