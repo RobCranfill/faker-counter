@@ -6,7 +6,7 @@ Can I get this done by Halloweeen?
 ## Things to do
 
 ### Functional Hardware
-* CircuitPython microcontroller (needs to support I2S - 3 GPIO pins)
+* CircuitPython microcontroller (needs to support I2S for audio - 3 GPIO pins)
   * *was:* <strike>Feather RP2040 (so I can use a LiPo battery)</strike>
 * USB battery pack
 * Actuator to increase click rate
@@ -15,23 +15,30 @@ Can I get this done by Halloweeen?
 * Analog meter? yes!
 * LED(s)?
 
-## Cosmetic Hardware
+### Cosmetic Hardware
 * A box
   * Handle? Strap?
-* Separate sensor cable?
+* Separate sensor cable
+  * A nice braided USB cable (not used for USB)
+  * Old non-contact electrical sensor for show
+  
 * Display
-  * Meter? I don't know how
-    * Fancy LCD display??? "Steel Series"?
+  * Meter? yes!
+    * Fancy LCD display? no.
   * LEDs?
     * Would they draw too much current?
+    * No, they are fine
+ * Speaker grill to hide ugly hole
 
 ### Software
 CircuitPython, of course!
 
 # Finished Project
 
-![Assembled project](doc_images/fakercounter.jpeg "G")
-![Assembled project](doc_images/board_overall.jpeg "Feather board assembled")
-![Assembled project](doc_images/case_no_board.jpeg "X")
-![Assembled project](doc_images/assembled.jpeg "Assembled")
-![Finished project](doc_images/case_outside.jpeg "The finished project")
+<img src="doc_images/fakercounter.jpeg" width="382"><br>
+<img src="doc_images/board_overall.jpeg" width="382"><br>
+<img src="doc_images/case_no_board.jpeg" width="382"><br>
+<img src="doc_images/assembled.jpeg" width="382"><br>
+<img src="doc_images/case_outside.jpeg" width="382"><br>
+<img src="doc_images/finished_front.jpeg" width="382"><br>
+<img src="doc_images/sensor_closeup.jpeg" width="382"><br>
