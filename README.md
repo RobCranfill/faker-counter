@@ -21,7 +21,7 @@ Can I get this done by Halloweeen?
 * Separate sensor cable
   * A nice braided USB cable (not used for USB)
   * Old non-contact electrical sensor for show
-  
+
 * Display
   * Meter? yes!
     * Fancy LCD display? no.
@@ -29,6 +29,10 @@ Can I get this done by Halloweeen?
     * Would they draw too much current?
     * No, they are fine
  * Speaker grill to hide ugly hole
+
+### Circuit Diagram
+
+<img src="doc_images/FakerCounter.png" width="382"><br>
 
 ### Software
 CircuitPython, of course!
