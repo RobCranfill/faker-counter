@@ -2,18 +2,18 @@
 A prop Geiger counter.
 
 This is a fake Geiger counter I used as part of my Halloween costume in 2023. I went as "Oppenclimber",
-a mashup of J. Robert Oppenheimer (suit & tie, fedora, pipe, security badge) and a rock climber (climbing
-harness & gear). I also carried this device, which has a speaker that plays actual digitized sounds of a
-real Geiger counter at two different levels: a "background" level of a few quiet clicks, and a "high" level
-of crazy clicks; the level is controlled by a somewhat inconspicuous button that you push while pointing a 
-"sensor wand" that actually does nothing. It also has two LEDs - green and red, for low and high levels -
-and a little analog voltmeter whose needle swings in accordance with the clicking.
+a mashup of J. Robert Oppenheimer (suit & tie, fedora, pipe, security badge, radiation goggles) and a 
+rock climber (climbing harness & gear). I also carried this device, which has a speaker that plays actual
+digitized sounds of a real Geiger counter at two different levels: a "background" level of a few quiet clicks,
+and a "high" level of crazy clicks; the level is controlled by a somewhat-inconspicuous button that you push 
+while pointing a "sensor wand" that actually does nothing. It also has two LEDs - green and red, for low and
+high levels - and a little analog voltmeter whose needle swings in accordance with the clicking.
 
 
 ### Hardware
 * CircuitPython microcontroller (needs to support I2S for audio - 3 GPIO pins)
   * The prototype, on a solderless breadboard, used an [Adafruit Feather RP2040](https://www.adafruit.com/product/4884).
-  * The second, final, version used a Raspberry Pi Pico.
+  * The second, final, version used a [Raspberry Pi Pico](https://www.adafruit.com/product/5544).
     * The only downside to the Pico is that the onboard storage was so much less, I had to create downsampled versions of the audio files. Which still sounded fine - you don't need much bandwidth for a bunch of clicking!
 * 3 watt I2S audio amp.
   * I used an [Adafruit MAX98357A](https://www.adafruit.com/product/3006)
