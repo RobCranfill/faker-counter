@@ -5,7 +5,7 @@ This is a fake Geiger counter I used as part of my Halloween costume in 2023. I 
 a mashup of J. Robert Oppenheimer (suit & tie, fedora, pipe, security badge) and a rock climber (climbing
 harness & gear). I also carried this device, which has a speaker that plays actual digitized sounds of a
 real Geiger counter at two different levels: a "background" level of a few quiet clicks, and a "high" level
-of crazy clicks; the level is controlled by a somewhat discreet button that you push while holding a 
+of crazy clicks; the level is controlled by a somewhat inconspicuous button that you push while pointing a 
 "sensor wand" that actually does nothing. It also has two LEDs - green and red, for low and high levels -
 and a little analog voltmeter whose needle swings in accordance with the clicking.
 
