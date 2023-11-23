@@ -37,9 +37,7 @@ and a little analog voltmeter whose needle swings in accordance with the clickin
 
 
 ### Software
-CircuitPython (version 8.2.7 used), of course! Plus the code included here. Plus the following libraries:
-* TODO: use circup to list libs
-
+CircuitPython (version 8.2.7 used), of course! Plus the code included here. There are no additional Python libraries to install!
 
 # Finished Project
 <img src="doc_images/fakercounter.jpeg" width="382"><br>
