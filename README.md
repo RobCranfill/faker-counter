@@ -38,6 +38,7 @@ and a little analog voltmeter whose needle swings in accordance with the clickin
 
 ### Software
 CircuitPython (version 8.2.7 used), of course! Plus the code included here. Plus the following libraries:
+* TODO: use circup to list libs
 
 
 # Finished Project

@@ -1,6 +1,7 @@
 # faker-counter: a geiger counter simulator.
 # Plays WAV files, loud or soft according to the state of a pushbutton.
 # robcranfill@gmail.com
+# Version for Raspberry Pi Pico.
 
 # std python libs
 import board
@@ -12,16 +13,14 @@ import audiobusio
 import audiocore
 import audiomixer
 import digitalio
-# import neopixel
 
 
 # turn off auto-reload - that messes with the audio
 import supervisor
 supervisor.runtime.autoreload = False  # CirPy 8 and above
 
-# Pico version!
 
-# defines, so to speak
+# defines, so to speak - for Pico
 GPIO_PIN_PUSHBUTTON = board.GP13
 PIN_GPIO_RED_LED    = board.GP14
 PIN_GPIO_GREEN_LED  = board.GP15
@@ -30,7 +29,11 @@ PIN_I2S_BCLK = board.GP16
 PIN_I2S_LRC  = board.GP17
 PIN_I2S_DATA = board.GP18
 
+# The green LED will flash slower than the red, by this factor
+GREEN_LED_FLASH_DIVIDER = 4
 
+
+# create a mixer object to play sounds
 def create_mixer():
     audio = audiobusio.I2SOut(bit_clock=PIN_I2S_BCLK, word_select=PIN_I2S_LRC, data=PIN_I2S_DATA)
     mixer = audiomixer.Mixer(voice_count=1, channel_count=1,
@@ -38,24 +41,15 @@ def create_mixer():
     audio.play(mixer)
     return mixer
 
-# load all the indicated wav files and return an array with the data
-def load_wavs(filenames):
-    result = []
-    for f in filenames:
-        try:
-            wav = audiocore.WaveFile(open(f, "rb"))
-            result.append(wav)
-        except Exception as e:
-            print(f"Can't load file {f}")
-            raise(e)
+
+# load the indicated wav file and return the data
+def load_wav(filename):
+    try:
+        result = audiocore.WaveFile(open(filename, "rb"))
+    except Exception as e:
+        print(f"Can't load file {filename}")
+        raise(e)
     return result
-
-# start the wav file playing, and wait for it to finish
-def play_loaded_wav(mixer_, wav_):
-    mixer_.voice[0].play(wav_, loop=False)
-    while mixer_.voice[0].playing:
-        time.sleep(.1)
-
 
 
 # play one sound continuously until we need to switch.
@@ -85,7 +79,7 @@ def play_continuosly(switch_, red_, green_, mixer_, lo_wav, hi_wav):
                 if button_was_pressed:
                     red_.value = True
                 else:
-                    green_counter = (green_counter+1) % 4
+                    green_counter = (green_counter+1) % GREEN_LED_FLASH_DIVIDER
                     if green_counter == 0:
                         green_.value = True
             else:
@@ -95,37 +89,24 @@ def play_continuosly(switch_, red_, green_, mixer_, lo_wav, hi_wav):
             time.sleep(.1)
 
 
+if __name__ == "__main__":
 
+    # the pushbutton
+    switch = digitalio.DigitalInOut(GPIO_PIN_PUSHBUTTON)
+    switch.direction = digitalio.Direction.INPUT
+    switch.pull = digitalio.Pull.UP
 
-# the pushbutton
-switch = digitalio.DigitalInOut(GPIO_PIN_PUSHBUTTON)
-switch.direction = digitalio.Direction.INPUT
-switch.pull = digitalio.Pull.UP
+    # the LEDs
+    red_led = digitalio.DigitalInOut(PIN_GPIO_RED_LED)
+    red_led.direction = digitalio.Direction.OUTPUT
 
-# # the "internal" LED, for fun
-# neopixel = neopixel.NeoPixel(board.NEOPIXEL, 1)
-# neopixel.brightness = 0.3
-neopixel = None
+    green_led = digitalio.DigitalInOut(PIN_GPIO_GREEN_LED)
+    green_led.direction = digitalio.Direction.OUTPUT
 
-# the new LEDs
-red_led = digitalio.DigitalInOut(PIN_GPIO_RED_LED)
-red_led.direction = digitalio.Direction.OUTPUT
+    mixer = create_mixer()
 
-green_led = digitalio.DigitalInOut(PIN_GPIO_GREEN_LED)
-green_led.direction = digitalio.Direction.OUTPUT
+    lo_wav = load_wav("audio/long_lo-b.wav")
+    hi_wav = load_wav("audio/long_hi-b.wav")
 
-
-# v = True
-# while True:
-#     red_led.value = v
-#     v = not v
-#     time.sleep(0.1)
-
-
-mixer = create_mixer()
-
-lo_wav = load_wavs(["audio/long_lo-b.wav"])[0]
-hi_wav = load_wavs(["audio/long_hi-b.wav"])[0]
-
-play_continuosly(switch, red_led, green_led, mixer, lo_wav, hi_wav)
+    play_continuosly(switch, red_led, green_led, mixer, lo_wav, hi_wav)
 
