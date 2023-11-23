@@ -38,13 +38,14 @@ high levels - and a little analog voltmeter whose needle swings in accordance wi
 CircuitPython (version 8.2.7 used), of course! Plus the code included here. There are no additional Python libraries to install!
 
 # Finished Project
-<img src="doc_images/fakercounter.jpeg" width="382"><br>
-<img src="doc_images/board_overall.jpeg" width="382"><br>
-<img src="doc_images/case_no_board.jpeg" width="382"><br>
-<img src="doc_images/assembled.jpeg" width="382"><br>
-<img src="doc_images/case_outside.jpeg" width="382"><br>
-<img src="doc_images/finished_front.jpeg" width="382"><br>
-<img src="doc_images/sensor_closeup.jpeg" width="382"><br>
+<img src="doc_images/fakercounter.jpeg"   width="382" title="The finished project"><br>
+<img src="doc_images/board_overall.jpeg"  width="382" title="The prototyped circuit"><br>
+<img src="doc_images/case_no_board.jpeg"  width="382" title="Case and battery pack"><br>
+<img src="doc_images/assembled.jpeg"      width="382" title="Ready to be buttoned up"><br>
+<img src="doc_images/case_outside.jpeg"   width="382" title="Stickers!"><br>
+<img src="doc_images/finished_front.jpeg" width="382" title="The front end"><br>
+<img src="doc_images/sensor_closeup.jpeg" width="382" title="Bogus sensor"><br>
+<img src="doc_images/permaproto.jpeg"     width="382" title="Perma-Proto version"><br>
 
 
 # References, Notes
