@@ -15,18 +15,16 @@ high levels - and a little analog voltmeter whose needle swings in accordance wi
   * The prototype, on a solderless breadboard, used an [Adafruit Feather RP2040](https://www.adafruit.com/product/4884).
   * The second, final, version used a [Raspberry Pi Pico](https://www.adafruit.com/product/5544).
     * The only downside to the Pico is that the onboard storage was so much less, I had to create downsampled versions of the audio files. Which still sounded fine - you don't need much bandwidth for a bunch of clicking!
-* 3 watt I2S audio amp.
-  * I used an [Adafruit MAX98357A](https://www.adafruit.com/product/3006)
+* 3 watt I2S audio amp, such as an [Adafruit MAX98357A](https://www.adafruit.com/product/3006)
 * Push button to increase click rate.
 * Surplus analog voltmeter, 5 volts full scale.
 * Green LED for low activity, red LED for high.
-* Small speaker.
-  * I used an [Adafruit 3W 4 Ohm speaker](https://www.adafruit.com/product/4445)
+* Small speaker. I used an [Adafruit 3W 4 Ohm speaker](https://www.adafruit.com/product/4445)
 * 3 resistors, 1 diode, 1 capacitor (see schematic below).
-* A box ;I used a second-hand cash box.
+* A box; I used a second-hand cash box.
 * Some kind of speaker grill to hide the hole in the box. I used a piece of open-cell foam.
 * USB battery pack.
-* Old non-contact electrical sensor as the "sensor".
+* Old broken non-contact voltage tester as the "sensor".
 * A nice braided USB cable as the "sensor" cable.
 * Stickers! I also created artwork which I then printed at a local photo kiosk and glued them on.
 * [Solderless breadboard](https://www.adafruit.com/product/64) & [leads](https://www.adafruit.com/product/153), or ["perma-proto" board](https://www.adafruit.com/product/1609) & solder.
